@@ -4,24 +4,29 @@ import ReactDOM from 'react-dom';
 
 
 class App extends React.Component{
-    constructor(props){
-        super(props);
 
-        // only time when we do direct assignment
-        this.state = {lat: null};
+    state = {lat: null, errorMessage: ''};
 
+    componentDidMount(){
         window.navigator.geolocation.getCurrentPosition(
-            (position) => {
-                // any other time we need to use setState
-                this.setState({lat: position.coords.latitude});
-            },
-            (err) => console.log(err) 
-        );
+         // any other time we need to use setState
 
+            (position) => this.setState({lat: position.coords.latitude}),
+            (err) => this.setState({errorMessage: err.message })
+            
+        );
     }
 
     render(){
-        return <div> Latitude: {this.state.lat}</div>;
+        if (this.state.errorMessage && !this.state.lat){
+            return <div> Error: {this.state.errorMessage} </div>;
+        }
+        if (!this.state.errorMessage && this.state.lat){
+            return <div> Latitude: {this.state.lat} </div>;
+        }
+
+        return <div> Loading! </div>;
+
 }
 }
 
